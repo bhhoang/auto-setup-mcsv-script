@@ -2,20 +2,20 @@
 set -euo pipefail
 
 # ========== Config ==========
-SERVER_DIR="${SERVER_DIR:-server2}"
-MC_VERSION="${MC_VERSION:-latest}"
+SERVER_DIR="server2"
+MC_VERSION="latest"
 
 PLUGINS=(
-  "modrinth|luckperms|LuckPerms.jar"
-  "modrinth|coreprotect|CoreProtect.jar"
-  "direct|https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot|Floodgate.jar"
-  "direct|https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/spigot|Geyser-Spigot.jar"
-  "modrinth|skinsrestorer|SkinsRestorer.jar"
-  "modrinth|chunky|Chunky.jar"
-  "modrinth|viaversion|ViaVersion.jar"
-  "modrinth|tab-was-taken|TAB.jar"
-  "modrinth|gsit|GSit.jar"
-  "modrinth|bYazc7fd|InvSee++.jar"
+  "modrinth:luckperms:LuckPerms.jar"
+  "modrinth:coreprotect:CoreProtect.jar"
+  "https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot:Floodgate.jar"
+  "https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/spigot:Geyser-Spigot.jar"
+  "modrinth:skinsrestorer:SkinsRestorer.jar"
+  "modrinth:chunky:Chunky.jar"
+  "modrinth:viaversion:ViaVersion.jar"
+  "modrinth:tab-was-taken:TAB.jar"
+  "modrinth:gsit:GSit.jar"
+  "modrinth:bYazc7fd:InvSee++.jar"
 )
 
 # Install plugins
