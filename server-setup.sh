@@ -2,8 +2,8 @@
 set -euo pipefail
 
 # ========== Config ==========
-SERVER_DIR="${SERVER_DIR:-server2}"
-MINECRAFT_VERSION="${MINECRAFT_VERSION:-latest}"
+SERVER_DIR="server2"
+MINECRAFT_VERSION="latest"
 PAPER_JAR="${PAPER_JAR:-paper.jar}"
 
 # Java Config
@@ -24,7 +24,7 @@ PLUGINS=(
   "modrinth|viaversion|ViaVersion.jar"
   "modrinth|tab-was-taken|TAB.jar"
   "modrinth|gsit|GSit.jar"
-  "modrinth|bYazc7fd|InvSee++.jar" 
+  "modrinth|bYazc7fd|InvSee++.jar"
 )
 
 # ========== Core Utilities ==========
