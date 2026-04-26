@@ -25,6 +25,10 @@ PLUGINS=(
   "modrinth|tab-was-taken|TAB.jar"
   "modrinth|gsit|GSit.jar"
   "modrinth|bYazc7fd|InvSee++.jar"
+  "modrinth|clickvillagers|ClickVillagers.jar"
+  "modrinth|veinminer|Veinminer.jar"
+  "modrinth|dynmap|Dynmap.jar"
+  "modrinth|infinite-villager-trading|InfiniteVillagerTrading.jar"
 )
 
 # ========== Core Utilities ==========
