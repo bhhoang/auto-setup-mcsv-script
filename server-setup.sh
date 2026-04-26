@@ -14,6 +14,9 @@ JAVA_LOCAL_DIR="java"
 PROJECT="paper"
 USER_AGENT="PaperSetupScript/1.0.0 (admin@example.com)"
 
+# Resolved Minecraft version (populated at runtime)
+RESOLVED_MC_VERSION=""
+
 PLUGINS=(
   "modrinth|luckperms|LuckPerms.jar"
   "modrinth|coreprotect|CoreProtect.jar"
@@ -75,6 +78,32 @@ check_dependencies() {
 
 # ========== Setup Modules ==========
 
+resolve_minecraft_version() {
+  if [ -n "$RESOLVED_MC_VERSION" ]; then
+    return
+  fi
+
+  if [ "$MINECRAFT_VERSION" != "latest" ]; then
+    RESOLVED_MC_VERSION="$MINECRAFT_VERSION"
+    return
+  fi
+
+  echo "Resolving latest Minecraft version for plugin compatibility..."
+  local versions
+  versions=$(api_fetch "https://fill.papermc.io/v3/projects/${PROJECT}" | jq -r '.versions | to_entries[] | .value[]' | sort -V -r)
+
+  for version in $versions; do
+    local version_builds
+    version_builds=$(api_fetch "https://fill.papermc.io/v3/projects/${PROJECT}/versions/${version}/builds")
+    if echo "$version_builds" | jq -e 'first(.[] | select(.channel == "STABLE"))' > /dev/null 2>&1; then
+      RESOLVED_MC_VERSION="$version"
+      return
+    fi
+  done
+
+  echo "Warning: Could not resolve latest Minecraft version for plugin compatibility." >&2
+}
+
 install_local_java() {
   local target_dir="$SERVER_DIR/$JAVA_LOCAL_DIR"
   if [ -f "$target_dir/bin/java" ]; then
@@ -109,6 +138,7 @@ install_paper() {
   local paper_url="null"
 
   if [ "$target_version" != "latest" ]; then
+    RESOLVED_MC_VERSION="$target_version"
     local builds_response
     builds_response=$(api_fetch "https://fill.papermc.io/v3/projects/${PROJECT}/versions/${target_version}/builds")
     if ! echo "$builds_response" | jq -e '.ok == false' > /dev/null 2>&1; then
@@ -128,6 +158,7 @@ install_paper() {
 
       if [ "$stable_url" != "null" ]; then
         paper_url="$stable_url"
+        RESOLVED_MC_VERSION="$version"
         break
       fi
     done
@@ -145,6 +176,7 @@ install_paper() {
 install_plugins() {
   mkdir -p "$SERVER_DIR/plugins"
   echo "Checking and downloading plugins..."
+  resolve_minecraft_version
   
   for entry in "${PLUGINS[@]}"; do
     IFS="|" read -r type identifier outfile <<< "$entry"
@@ -157,9 +189,13 @@ install_plugins() {
       local response
       response=$(api_fetch "https://api.modrinth.com/v2/project/$identifier/version")
       
-      # Filter to ONLY versions that declare paper, bukkit, or spigot as their loader
-      dl_url=$(echo "$response" | jq -r '
-        [ .[] | select(.loaders != null and (.loaders | index("paper") or index("bukkit") or index("spigot"))) ]
+      # Filter to versions that support paper/bukkit/spigot and match the current Minecraft version
+      dl_url=$(echo "$response" | jq -r --arg mcver "$RESOLVED_MC_VERSION" '
+        [ .[] | select(
+            .loaders != null and
+            (.loaders | index("paper") or index("bukkit") or index("spigot")) and
+            (if $mcver != "" then (.game_versions | index($mcver) != null) else true end)
+        )]
         | .[0].files[0].url // empty
       ')
       
