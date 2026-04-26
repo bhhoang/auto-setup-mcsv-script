@@ -28,7 +28,6 @@ PLUGINS=(
   "modrinth|clickvillagers|ClickVillagers.jar"
   "modrinth|veinminer|Veinminer.jar"
   "modrinth|dynmap|Dynmap.jar"
-  "modrinth|lagfixer|LagFixer.jar"
   "modrinth|infinite-villager-trading|InfiniteVillagerTrading.jar"
 )
 
